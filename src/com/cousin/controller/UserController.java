@@ -13,6 +13,6 @@ public class UserController {
 
     @MesRoutes("/user/add")
     public String addUser() {
-        return "add.jsp";
+        return "add";
     }
 }
