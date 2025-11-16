@@ -152,3 +152,5 @@ copy /y "%WAR_NAME%" "%TOMCAT_PATH%\webapps\"
 echo.
 echo 🎯 DEPLOIEMENT TERMINE!
 echo.
+
+pause
