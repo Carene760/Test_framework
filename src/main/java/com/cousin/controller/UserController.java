@@ -24,11 +24,4 @@ public class UserController {
         mv.addAttribute("email", "john@example.com");
         return mv;
     }
-
-    @MesRoutes("/user/delete")
-    public ModelView deleteUser() {
-        ModelView mv = new ModelView("redirect:/user/list");
-        mv.addAttribute("message", "Utilisateur supprimé avec succès");
-        return mv;
-    }
 }
