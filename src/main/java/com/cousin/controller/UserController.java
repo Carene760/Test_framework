@@ -2,22 +2,26 @@ package com.cousin.controller;
 
 import com.framework.annotation.Controller;
 import com.framework.model.ModelView;
-import com.framework.annotation.Url;
+import com.framework.annotation.GetMapping;
+import com.framework.annotation.PostMapping;
+import com.framework.annotation.Param;
+import com.framework.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/user") // Préfixe pour toutes les routes user
 public class UserController {
 
-    @Url("/user/list")
+    @GetMapping("/list")
     public String list() {
-        return "Voici la liste des utilisateurs";
+        return "Voici la liste des utilisateurs (GET)";
     }
 
-    @Url("/user/add")
+    @PostMapping("/add")
     public String addUser() {
-        return "Page d'ajout d'utilisateur";
+        return "Page d'ajout d'utilisateur (POST)";
     }
 
-    @Url("/user/profile")
+    @GetMapping("/profile")
     public ModelView userProfile() {
         ModelView mv = new ModelView("/WEB-INF/views/user/profil.jsp");
         mv.addAttribute("username", "John Doe");
@@ -25,23 +29,9 @@ public class UserController {
         return mv;
     }
     
-    // NOUVELLE ROUTE PARAMETREE
-    @Url("/user/{id}")
-    public String getUserById() {
-        // Pour l'instant, on retourne juste un message
-        // L'extraction de l'ID viendra plus tard
-        return "Route paramétrée /user/{id} appelée! L'ID sera extrait plus tard.";
-    }
-    
-    // Une autre route paramétrée pour tester
-    @Url("/article/{slug}/view")
-    public String viewArticle() {
-        return "Route paramétrée /article/{slug}/view appelée!";
-    }
-    
-    // Route avec plusieurs paramètres
-    @Url("/category/{categoryId}/product/{productId}")
-    public String viewProduct() {
-        return "Route avec deux paramètres : category/{categoryId}/product/{productId}";
+    @GetMapping("/{id}")
+    public String getUserById(@Param("id") int userId) {
+        return "<h2>GET /user/" + userId + "</h2>" +
+               "<p>Utilisateur ID: " + userId + "</p>";
     }
 }
