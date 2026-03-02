@@ -6,6 +6,7 @@ import com.framework.annotation.PostMapping;
 import com.framework.annotation.SessionAttributes;
 import com.framework.annotation.SessionParam;
 import com.framework.annotation.Param;
+import com.framework.annotation.Auth;
 import com.framework.model.SessionModelView;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ public class SessionTestController {
         // Ajouter des attributs de session
         smv.addSessionAttribute("username", username);
         smv.addSessionAttribute("role", role);
+        smv.addSessionAttribute("isAuthenticated", true);
         smv.addSessionAttribute("loginTime", System.currentTimeMillis());
         
         // Ajouter des attributs de requête
@@ -30,12 +32,14 @@ public class SessionTestController {
 
     // Test 2: Récupérer un attribut spécifique de session avec @SessionParam
     @GetMapping("/session/profile")
+    @Auth
     public String showProfile(@SessionParam("username") String username, 
                              @SessionParam(value = "role", required = false) String role) {
         return """
             <h1>Profil Utilisateur</h1>
             <p>Nom: %s</p>
             <p>Rôle: %s</p>
+            <a href="/test/session/public">Page publique</a><br>
             <a href="/test/session/all">Voir toute la session</a>
             """.formatted(
                 username != null ? username : "Non connecté",
@@ -45,6 +49,7 @@ public class SessionTestController {
 
     // Test 3: Récupérer toute la session avec @SessionAttributes
     @GetMapping("/session/all")
+    @Auth
     public String showAllSession(@SessionAttributes Map<String, Object> sessionData) {
         StringBuilder sb = new StringBuilder();
         sb.append("<h1>Contenu de la Session</h1>");
@@ -61,7 +66,17 @@ public class SessionTestController {
         
         sb.append("</ul>");
         sb.append("<a href='/test/session/form'>Retour au formulaire</a>");
+        sb.append("<br><a href='/test/session/admin'>Espace admin</a>");
         return sb.toString();
+    }
+
+    @GetMapping("/session/public")
+    public String publicPage() {
+        return """
+            <h1>Page publique</h1>
+            <p>Aucune authentification requise.</p>
+            <a href='/test/session/form'>Login test</a>
+            """;
     }
 
     // Test 4: Formulaire de login
@@ -75,13 +90,16 @@ public class SessionTestController {
                 <button>Se connecter</button>
             </form>
             <hr>
+                <a href="/test/session/public">Page publique (sans auth)</a><br>
             <a href="/test/session/profile">Voir profil</a><br>
-            <a href="/test/session/all">Voir toute la session</a>
+                <a href="/test/session/all">Voir toute la session</a><br>
+                <a href="/test/session/admin">Espace admin (role admin requis)</a>
             """;
     }
 
     // Test 5: Modifier la session
     @PostMapping("/session/update")
+    @Auth({"admin"})
     public SessionModelView updateSession(@SessionParam("username") String currentUser,
                                          @Param("newRole") String newRole) {
         SessionModelView smv = new SessionModelView("/WEB-INF/views/session/updated.jsp");
@@ -94,5 +112,17 @@ public class SessionTestController {
         smv.addAttribute("newRole", newRole);
         
         return smv;
+    }
+
+    @GetMapping("/session/admin")
+    @Auth({"admin"})
+    public String adminPage(@SessionParam("username") String username,
+                            @SessionParam(value = "role", required = false) String role) {
+        return """
+            <h1>Espace Admin</h1>
+            <p>Bienvenue %s</p>
+            <p>Role courant: %s</p>
+            <a href='/test/session/form'>Retour</a>
+            """.formatted(username, role != null ? role : "inconnu");
     }
 }
