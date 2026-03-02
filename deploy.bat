@@ -39,7 +39,7 @@ set "CURRENT_DIR=%CD%"
 
 del sources_abs.tmp 2>nul
 
-javac -classpath "%TOMCAT_LIB%\servlet-api.jar;%FRAMEWORK_JAR%" -d %BUILD%\WEB-INF\classes @"sources.txt"
+javac -classpath "%TOMCAT_LIB%\servlet-api.jar;%FRAMEWORK_JAR%" -parameters -d %BUILD%\WEB-INF\classes @"sources.txt"
 if errorlevel 1 (
     echo Erreur de compilation!
     del sources.txt 2>nul
