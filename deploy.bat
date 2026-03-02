@@ -153,4 +153,3 @@ echo.
 echo 🎯 DEPLOIEMENT TERMINE!
 echo.
 
-pause
