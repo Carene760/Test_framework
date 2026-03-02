@@ -1,85 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Test Extraction URL</title>
+    <title>Test Méthodes HTTP</title>
     <style>
         body { font-family: Arial; margin: 40px; }
-        .test { border: 1px solid #3498db; padding: 20px; margin: 20px 0; border-radius: 8px; }
-        h2 { color: #2c3e50; margin-top: 0; }
-        .code { background: #2c3e50; color: white; padding: 10px; border-radius: 5px; font-family: monospace; }
-        a { display: inline-block; margin: 10px 10px 0 0; padding: 10px 15px; 
-            background: #3498db; color: white; text-decoration: none; border-radius: 4px; }
-        a:hover { background: #2980b9; }
-        .result { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .method { margin: 30px 0; padding: 20px; border-radius: 8px; }
+        .get { border-left: 5px solid #4CAF50; background: #f1f8e9; }
+        .post { border-left: 5px solid #2196F3; background: #e3f2fd; }
+        .put { border-left: 5px solid #FF9800; background: #fff3e0; }
+        .delete { border-left: 5px solid #f44336; background: #ffebee; }
+        h2 { margin-top: 0; }
+        .btn { 
+            display: inline-block; padding: 10px 15px; margin: 5px;
+            text-decoration: none; border-radius: 4px; color: white;
+        }
+        .btn-get { background: #4CAF50; }
+        .btn-post { background: #2196F3; }
+        .btn-put { background: #FF9800; }
+        .btn-delete { background: #f44336; }
+        .btn:hover { opacity: 0.9; }
+        form { display: inline; }
+        .code { background: #2c3e50; color: white; padding: 10px; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <h1>🧪 Test Extraction depuis URL</h1>
+    <h1>🧪 Test des Méthodes HTTP</h1>
     
-    <div class="test">
-        <h2>Test 1: Extraction Simple</h2>
-        <div class="code">@Url("/etudiant/{id}")<br>public String testExtractionSimple(int id)</div>
-        <a href="${pageContext.request.contextPath}/etudiant/25">/etudiant/25</a>
-        <a href="${pageContext.request.contextPath}/etudiant/100">/etudiant/100</a>
+    <div class="method get">
+        <h2>GET - Récupération</h2>
+        <div class="code">@GetMapping("/api/users")</div>
+        <a class="btn btn-get" href="${pageContext.request.contextPath}/api/users">GET /api/users</a>
+        
+        <div class="code" style="margin-top: 15px;">@GetMapping("/api/users/{id}")</div>
+        <a class="btn btn-get" href="${pageContext.request.contextPath}/api/users/1">GET /api/users/1</a>
+        <a class="btn btn-get" href="${pageContext.request.contextPath}/api/users/42">GET /api/users/42</a>
     </div>
     
-    <div class="test">
-        <h2>Test 2: URL + Paramètres GET</h2>
-        <div class="code">@Url("/etudiant/{id}/details")<br>public String testUrlPlusGet(int id, String view)</div>
-        <a href="${pageContext.request.contextPath}/etudiant/25/details?view=full">/etudiant/25/details?view=full</a>
-        <a href="${pageContext.request.contextPath}/etudiant/42/details">/etudiant/42/details (sans view)</a>
+    <div class="method post">
+        <h2>POST - Création</h2>
+        <div class="code">@PostMapping("/api/users")</div>
+        <form method="POST" action="${pageContext.request.contextPath}/api/users" style="display: block;">
+            <input type="text" name="name" placeholder="Nom" value="Jean Dupont">
+            <input type="email" name="email" placeholder="Email" value="jean@example.com">
+            <button type="submit" class="btn btn-post">POST /api/users</button>
+        </form>
+        
+        <div class="code" style="margin-top: 15px;">@PostMapping("/api/articles")</div>
+        <form method="POST" action="${pageContext.request.contextPath}/api/articles">
+            <input type="text" name="title" placeholder="Titre" value="Mon Article">
+            <textarea name="content" placeholder="Contenu">Contenu de l'article...</textarea>
+            <button type="submit" class="btn btn-post">POST /api/articles</button>
+        </form>
     </div>
     
-    <div class="test">
-        <h2>Test 3: @Param avec extraction URL</h2>
-        <div class="code">@Url("/produit/{produitId}")<br>
-public String testParamWithUrl(<br>
-&nbsp;&nbsp;@Param("produitId") int var1,<br>
-&nbsp;&nbsp;String produitId,<br>
-&nbsp;&nbsp;@Param("action") String action)</div>
-        <a href="${pageContext.request.contextPath}/produit/999?action=acheter">/produit/999?action=acheter</a>
-        <a href="${pageContext.request.contextPath}/produit/456">/produit/456 (sans action)</a>
+    <div class="method get">
+        <h2>Même chemin, méthodes différentes</h2>
+        <div class="code">@GetMapping("/api/item/{id}")<br>@PostMapping("/api/item/{id}")</div>
+        <a class="btn btn-get" href="${pageContext.request.contextPath}/api/item/100">GET /api/item/100</a>
+        <form method="POST" action="${pageContext.request.contextPath}/api/item/100" style="display: inline;">
+            <input type="hidden" name="action" value="test">
+            <button type="submit" class="btn btn-post">POST /api/item/100</button>
+        </form>
     </div>
     
-    <div class="test">
-        <h2>Test 4: Priorité URL > GET</h2>
-        <div class="code">@Url("/article/{slug}")<br>
-public String testUrlPriority(String slug, @Param("slug") String slugFromGet)</div>
-        <div class="result">
-            <strong>Test important:</strong> Montre que l'URL a priorité sur GET<br>
-            <a href="${pageContext.request.contextPath}/article/mon-article?slug=autre">/article/mon-article?slug=autre</a><br>
-            → slug = "mon-article" (depuis URL) pas "autre" (depuis GET)
-        </div>
-    </div>
-    
-    <div class="test">
-        <h2>Test 5: Multiples paramètres URL</h2>
-        <div class="code">@Url("/categorie/{catId}/produit/{prodId}")<br>
-public String testMultipleUrlParams(<br>
-&nbsp;&nbsp;@Param("catId") int categoryId,<br>
-&nbsp;&nbsp;@Param("prodId") int productId,<br>
-&nbsp;&nbsp;String format)</div>
-        <a href="${pageContext.request.contextPath}/categorie/5/produit/42?format=json">/categorie/5/produit/42?format=json</a>
-    </div>
-    
-    <div class="test">
-        <h2>Test 6: Types différents depuis URL</h2>
-        <div class="code">@Url("/user/{id}/status/{active}")<br>
-public String testDifferentTypes(<br>
-&nbsp;&nbsp;int id,<br>
-&nbsp;&nbsp;boolean active,<br>
-&nbsp;&nbsp;@Param("details") String showDetails)</div>
-        <a href="${pageContext.request.contextPath}/user/123/status/true?details=yes">/user/123/status/true?details=yes</a>
-        <a href="${pageContext.request.contextPath}/user/456/status/false">/user/456/status/false (sans details)</a>
+    <div class="method get">
+        <h2>Compatibilité @Url</h2>
+        <div class="code">@Url("/legacy")<br>@Url(value="/custom", method="POST")</div>
+        <a class="btn btn-get" href="${pageContext.request.contextPath}/api/legacy">GET /api/legacy (@Url)</a>
+        <form method="POST" action="${pageContext.request.contextPath}/api/custom" style="display: inline;">
+            <button type="submit" class="btn btn-post">POST /api/custom (@Url)</button>
+        </form>
     </div>
     
     <h3>📝 À observer dans la console :</h3>
-    <div class="result">
-        <strong>Pour /etudiant/25?var2=hello :</strong><br>
-        1. 🌐 Extraction de l'URL: {id} = 25<br>
-        2. 📋 Paramètres disponibles: id=25, var2=hello<br>
-        3. 🔍 Résolution des paramètres<br>
-        4. 🎯 Injection dans la méthode
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+        <pre>
+=== Nouvelle requête ===
+🌐 GET /api/users
+✅ Route exacte trouvée: GET /api/users -> HttpMethodController.getAllUsers
+📋 Tous les paramètres disponibles...
+🎯 Arguments pour getAllUsers: []
+
+=== Nouvelle requête ===
+🌐 POST /api/users
+✅ Route exacte trouvée: POST /api/users -> HttpMethodController.createUser
+📋 Tous les paramètres disponibles...
+🎯 Arguments pour createUser: [name, email]
+        </pre>
     </div>
+    
+    <script>
+        // Support des méthodes PUT/DELETE via POST + paramètre _method
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const method = this.querySelector('[name="_method"]');
+                if (method && method.value) {
+                    // Créer un champ caché pour la méthode réelle
+                    const realMethod = document.createElement('input');
+                    realMethod.type = 'hidden';
+                    realMethod.name = '_method';
+                    realMethod.value = method.value;
+                    this.appendChild(realMethod);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
