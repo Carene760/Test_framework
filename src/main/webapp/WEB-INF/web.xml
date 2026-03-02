@@ -12,6 +12,18 @@
             <param-name>controller-package</param-name>
             <param-value>com.cousin.controller</param-value>
         </init-param>
+        <init-param>
+            <param-name>auth-session-user-key</param-name>
+            <param-value>username</param-value>
+        </init-param>
+        <init-param>
+            <param-name>auth-session-role-key</param-name>
+            <param-value>role</param-value>
+        </init-param>
+        <init-param>
+            <param-name>auth-session-authenticated-key</param-name>
+            <param-value>isAuthenticated</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     
